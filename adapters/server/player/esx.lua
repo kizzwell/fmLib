@@ -104,14 +104,6 @@ function adapter.getPlayerBySrc(src)
         return acc.money
     end
 
-    p.getSSN = function()
-        return _fwp.ssn
-    end
-
-    p.getBirthday = function()
-        return _fwp.variables.dateofbirth
-    end
-
     p.getIdentifier = function()
         return _fwp.getIdentifier()
     end
@@ -193,12 +185,32 @@ function adapter.getPlayerBySrc(src)
         return string.split(_fwp.getName(), " ")[1]
     end
 
+    p.getMiddleName = function()
+        return _fwp.variables.middleName or false
+    end
+
     p.getLastName = function()
         return string.split(_fwp.getName(), " ")[2]
     end
 
     p.getFullName = function()
         return _fwp.getName()
+    end
+
+    p.getHeight = function()
+        return _fwp.variables.height or "unknown"
+    end
+
+    p.getSSN = function()
+        return _fwp.ssn
+    end
+
+    p.getBirthday = function()
+        return _fwp.variables.dateofbirth
+    end
+
+    p.getGender = function()
+        return _fwp.variables.sex
     end
 
     p.hasItemAmount = function(item, amount)
