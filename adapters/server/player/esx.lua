@@ -198,7 +198,7 @@ function adapter.getPlayerBySrc(src)
     end
 
     p.getHeight = function()
-        return _fwp.variables.height or "unknown"
+        return _fwp.variables.height or "unsupported"
     end
 
     p.getSSN = function()
@@ -221,10 +221,25 @@ function adapter.getPlayerBySrc(src)
     end
 
     p.isAdmin = function()
-        if _fwp.getGroup() == Defaults.ADMIN_ESX then
+        local PlayerGroup = _fwp.getGroup()
+        local AdminGroups = ESX.GetConfig("AdminGroups")
+
+        -- check from default values
+        if PlayerGroup == Defaults.ADMIN_ESX then
             return true
         end
 
+        -- check based on ESX Config Group
+        if AdminGroups[PlayerGroup] then
+            return true
+        end
+
+        -- check from player data
+        if _fwp.isAdmin() then
+            return true
+        end
+
+        -- fallback from ace
         return IsPlayerAceAllowed(_fwp.source, "command")
 
         -- Want custom admin group? Uncomment below and add the group in server.cfg
