@@ -16,17 +16,17 @@ function string.split(str, delimiter)
     end
 
     table.insert(result, string.sub(str, from))
-    return result
+    return resultKi
 end
 
 function adapter.getFullnameByIdentifier(identifier)
     if not identifier then return nil end
 
-    local result = MySQL.query.await('SELECT JSON_EXTRACT(charinfo, "$.firstname") as firstname, JSON_EXTRACT(charinfo, "$.lastname") as lastname FROM players WHERE citizenid = ?', {identifier})
+    local result = MySQL.query.await('SELECT JSON_EXTRACT(charinfo, "$.firstname") as firstname, JSON_EXTRACT(charinfo, "$.lastname") as lastname FROM players WHERE citizenid = ?', { identifier })
     if result and result[1] then
-        local firstname = result[1].firstname and string.gsub(result[1].firstname, '"', '') or ''
-        local lastname = result[1].lastname and string.gsub(result[1].lastname, '"', '') or ''
-        return firstname .. ' ' .. lastname
+        local firstname = result[1].firstname and string.gsub(result[1].firstname, '"', "") or ""
+        local lastname = result[1].lastname and string.gsub(result[1].lastname, '"', "") or ""
+        return firstname .. " " .. lastname
     end
 
     return nil
@@ -36,7 +36,7 @@ function adapter.getPlayerBySrc(src)
     if not src then return end
 
     local _fwp = QB.Functions.GetPlayer(src)
-    if not _fwp or type(_fwp) ~= 'table' then return end
+    if not _fwp or type(_fwp) ~= "table" then return end
 
     if _fwp.PlayerData and _fwp.PlayerData.source then
         _fwp.source = _fwp.PlayerData.source
@@ -50,7 +50,7 @@ function adapter.getPlayerBySrc(src)
         if not item or not amount then return false end
         if not ignoreCheck and not p.canAddItem(item, amount) then return false end
 
-        if FM.inventory.hasFunction('addItem') then
+        if FM.inventory.hasFunction("addItem") then
             return FM.inventory.addItem(_fwp.source, item, amount, metadata)
         end
 
@@ -61,11 +61,11 @@ function adapter.getPlayerBySrc(src)
         moneyType = moneyType or Defaults.MONEY
         if not amount then return end
 
-        if transactionData and moneyType == 'bank' then
-            if GetResourceState('RxBanking') == 'started' then
-                local personalAcc = exports['RxBanking']:GetPlayerPersonalAccount(p.getIdentifier())
+        if transactionData and moneyType == "bank" then
+            if GetResourceState("RxBanking") == "started" then
+                local personalAcc = exports["RxBanking"]:GetPlayerPersonalAccount(p.getIdentifier())
                 if personalAcc then
-                    exports['RxBanking']:CreateTransaction(amount, transactionData.type,
+                    exports["RxBanking"]:CreateTransaction(amount, transactionData.type,
                         transactionData.fromIban, personalAcc.iban, transactionData.reason)
                 end
             end
@@ -77,7 +77,7 @@ function adapter.getPlayerBySrc(src)
     p.canAddItem = function(item, amount)
         if not item or not amount then return false end
 
-        if FM.inventory.hasFunction('canCarryItem') then
+        if FM.inventory.hasFunction("canCarryItem") then
             return FM.inventory.canCarryItem(_fwp.source, item, amount)
         end
 
@@ -89,7 +89,7 @@ function adapter.getPlayerBySrc(src)
 
         local money = _fwp.PlayerData.money[moneyType]
         if money == nil then
-            Error('Money Type not found: ' .. moneyType)
+            Error("Money Type not found: " .. moneyType)
             return 0
         end
 
@@ -110,8 +110,8 @@ function adapter.getPlayerBySrc(src)
     end
 
     p.getGang = function()
-        if GetResourceState('arketype_GangBuilder') == 'started' then
-            local info = exports['arketype_GangBuilder']:getGang(_fwp.source)
+        if GetResourceState("arketype_GangBuilder") == "started" then
+            local info = exports["arketype_GangBuilder"]:getGang(_fwp.source)
             if info then
                 return {
                     name = info.gangplayer_name,
@@ -133,14 +133,14 @@ function adapter.getPlayerBySrc(src)
     p.getItem = function(item)
         if not item then return end
 
-        if FM.inventory.hasFunction('getItem') then
+        if FM.inventory.hasFunction("getItem") then
             return FM.inventory.getItem(_fwp.source, item)
         end
 
-        Debug('(p.getItem) Executing QB GetItemByName on: ' .. item)
+        Debug("(p.getItem) Executing QB GetItemByName on: " .. item)
         local itemData = _fwp.Functions.GetItemByName(item)
         if not itemData then return end
-        Debug('(p.getItem) GetItemByName returned: ' .. itemData.name .. ' (x' .. itemData.amount .. ') ' .. itemData.label)
+        Debug("(p.getItem) GetItemByName returned: " .. itemData.name .. " (x" .. itemData.amount .. ") " .. itemData.label)
 
         return {
             name = itemData.name,
@@ -150,7 +150,7 @@ function adapter.getPlayerBySrc(src)
     end
 
     p.getItems = function()
-        if FM.inventory.hasFunction('getInventory') then
+        if FM.inventory.hasFunction("getInventory") then
             return FM.inventory.getInventory(_fwp.source)
         end
 
@@ -180,7 +180,14 @@ function adapter.getPlayerBySrc(src)
     end
 
     p.getFullName = function()
-        return _fwp.PlayerData.charinfo.firstname .. ' ' .. _fwp.PlayerData.charinfo.lastname
+        local nameParts = {}
+        local charinfo = _fwp.PlayerData.charinfo
+        for _, value in pairs({ charinfo.firstname, charinfo.middlename, charinfo.lastname }) do
+            if type(value) == "string" and value ~= "" then
+                nameParts[#nameParts + 1] = value
+            end
+        end
+        return table.concat(nameParts, " ")
     end
 
     p.hasItemAmount = function(item, amount)
@@ -195,7 +202,7 @@ function adapter.getPlayerBySrc(src)
             return true
         end
 
-        return IsPlayerAceAllowed(_fwp.source, 'command')
+        return IsPlayerAceAllowed(_fwp.source, "command")
 
         -- Want custom admin group? Uncomment below and add the group in server.cfg
         -- IN SERVER.CFG: add_ace group.admin fmLib.admin allow
@@ -209,13 +216,13 @@ function adapter.getPlayerBySrc(src)
     p.notify = function(message, type)
         if not message then return end
 
-        TriggerClientEvent('QBCore:Notify', _fwp.source, message, type)
+        TriggerClientEvent("QBCore:Notify", _fwp.source, message, type)
     end
 
     p.removeItem = function(item, amount, slotId, metadata)
         if not item or not amount then return end
 
-        if FM.inventory.hasFunction('removeItem') then
+        if FM.inventory.hasFunction("removeItem") then
             FM.inventory.removeItem(_fwp.source, item, amount, slotId, metadata)
             return
         end
@@ -227,11 +234,11 @@ function adapter.getPlayerBySrc(src)
         moneyType = moneyType or Defaults.MONEY
         if not amount then return end
 
-        if transactionData and moneyType == 'bank' then
-            if GetResourceState('RxBanking') == 'started' then
-                local personalAcc = exports['RxBanking']:GetPlayerPersonalAccount(p.getIdentifier())
+        if transactionData and moneyType == "bank" then
+            if GetResourceState("RxBanking") == "started" then
+                local personalAcc = exports["RxBanking"]:GetPlayerPersonalAccount(p.getIdentifier())
                 if personalAcc then
-                    exports['RxBanking']:CreateTransaction(amount, transactionData.type, personalAcc.iban,
+                    exports["RxBanking"]:CreateTransaction(amount, transactionData.type, personalAcc.iban,
                         transactionData.toIban, transactionData.reason)
                 end
             end
@@ -259,17 +266,17 @@ function adapter.getPlayerByIdentifier(identifier)
     if not identifier then return end
 
     local _fwp = QB.Functions.GetPlayerByCitizenId(identifier)
-    if not _fwp or type(_fwp) ~= 'table' then return end
+    if not _fwp or type(_fwp) ~= "table" then return end
 
     return adapter.getPlayerBySrc(_fwp.PlayerData.source)
 end
 
 -- Event handlers
 function adapter.onPlayerLoaded(player)
-    TriggerEvent('fm:player:onPlayerLoaded', player.PlayerData.source)
+    TriggerEvent("fm:player:onPlayerLoaded", player.PlayerData.source)
 end
 
 -- Event registrations
-RegisterNetEvent('QBCore:Server:PlayerLoaded', adapter.onPlayerLoaded)
+RegisterNetEvent("QBCore:Server:PlayerLoaded", adapter.onPlayerLoaded)
 
 FM_Adapter_server_player_qb = adapter
