@@ -267,8 +267,8 @@ function adapter.getPlayerBySrc(src)
         _fwp.setJob(gangName, gangGrade)
     end
 
-    p.getRawData = function()
-        return _fwp
+    p.getCharInfo = function()
+        return _fwp.variables
     end
 
     return p

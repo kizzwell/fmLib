@@ -259,8 +259,8 @@ function adapter.getPlayerBySrc(src)
         _fwp.Functions.SetGang(gangName, gangGrade)
     end
 
-    p.getRawData = function()
-        return _fwp
+    p.getCharInfo = function()
+        return _fwp.PlayerData.charinfo
     end
 
     return p
