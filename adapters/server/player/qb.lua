@@ -260,7 +260,18 @@ function adapter.getPlayerBySrc(src)
     end
 
     p.getCharInfo = function()
-        return _fwp.PlayerData.charinfo
+        local data = _fwp.PlayerData.charinfo
+        local retval = {
+            dateofbirth = data.birthdate,
+            height = tostring(data.height),
+            gender = data.gender == 0 and "male" or "female",
+
+            lastname = data.lastname,
+            firstname = data.firstname,
+            middlename = data.middlename or false,
+        }
+
+        return retval
     end
 
     return p
