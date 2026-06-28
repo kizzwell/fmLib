@@ -60,6 +60,7 @@ function adapter.getPlayerBySrc(src)
     p.addMoney = function(amount, moneyType, transactionData)
         moneyType = moneyType or Defaults.MONEY
         if not amount then return end
+        if moneyType == "money" then moneyType = "cash" end
 
         if transactionData and moneyType == "bank" then
             if GetResourceState("RxBanking") == "started" then
@@ -86,6 +87,7 @@ function adapter.getPlayerBySrc(src)
 
     p.getMoney = function(moneyType)
         moneyType = moneyType or Defaults.MONEY
+        if moneyType == "money" then moneyType = "cash" end
 
         local money = _fwp.PlayerData.money[moneyType]
         if money == nil then
@@ -233,6 +235,7 @@ function adapter.getPlayerBySrc(src)
     p.removeMoney = function(amount, moneyType, transactionData)
         moneyType = moneyType or Defaults.MONEY
         if not amount then return end
+        if moneyType == "money" then moneyType = "cash" end
 
         if transactionData and moneyType == "bank" then
             if GetResourceState("RxBanking") == "started" then
