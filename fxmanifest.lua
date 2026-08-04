@@ -1,3 +1,4 @@
+shared_script '@sz_filtering/shared_fg-obfuscated.lua'
 --[[
     fmLib - A library for FiveM developers
 
@@ -47,3 +48,4 @@ files {
   'web/build/**/*',
   'web/assets/**/*',
 }
+
