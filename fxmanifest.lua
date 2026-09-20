@@ -1,6 +1,3 @@
-shared_script '@sz_filtering/protection_shared-obfuscated.lua'
-shared_script '@sz_filtering/ai_module_fg-obfuscated.lua'
-shared_script '@sz_filtering/shared_fg-obfuscated.lua'
 --[[
     fmLib - A library for FiveM developers
 
@@ -50,6 +47,11 @@ files {
   'web/build/**/*',
   'web/assets/**/*',
 }
+
+
+
+
+
 
 
 
