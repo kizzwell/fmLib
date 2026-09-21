@@ -10,6 +10,11 @@ local accountAdapter = BaseAdapter:new("account", "server")
 --- @param accountName string The name of the society/shared account (e.g., 'society_police')
 --- @return number Balance The current balance of the account (returns 0 if account not found)
 function FM.account.getMoney(accountName)
+    -- Szyszka: custom integration
+    if GetResourceState('sz_banking') == 'started' then
+        return exports.sz_banking:GetSocietyBalance('job', accountName)
+    end
+
     -- Uncomment to use RxBanking if available
     if GetResourceState("RxBanking") == "started" then
         local bankingCfg = exports["RxBanking"]:GetConfig()
@@ -27,6 +32,11 @@ end
 --- @param amount number The amount of money to add
 --- @return boolean Success status (true if money was added successfully, false otherwise)
 function FM.account.addMoney(accountName, amount)
+    -- Szyszka: custom integration
+    if GetResourceState('sz_banking') == 'started' then
+        return exports.sz_banking:AddSocietyMoney('job', accountName, amount, 'Society payment').ok
+    end
+
     -- Uncomment to use RxBanking if available
     if GetResourceState("RxBanking") == "started" then
         local bankingCfg = exports["RxBanking"]:GetConfig()
@@ -44,6 +54,11 @@ end
 --- @param amount number The amount of money to remove
 --- @return boolean Success status (true if money was removed successfully, false if insufficient funds or account not found)
 function FM.account.removeMoney(accountName, amount)
+    -- Szyszka: custom integration
+    if GetResourceState('sz_banking') == 'started' then
+        return exports.sz_banking:RemoveSocietyMoney('job', accountName, amount, 'Society payment').ok
+    end
+
     -- Uncomment to use RxBanking if available
     if GetResourceState("RxBanking") == "started" then
         local bankingCfg = exports["RxBanking"]:GetConfig()

@@ -62,6 +62,13 @@ function adapter.getPlayerBySrc(src)
         if not amount then return end
         if moneyType == "money" then moneyType = "cash" end
 
+        -- Szyszka: custom integration
+        if moneyType == 'bank' and GetResourceState('sz_banking') == 'started' then
+            return exports.sz_banking:AddPlayerMoney(_fwp.source, amount,
+                type(transactionData) == 'table' and transactionData.type or 'payment',
+                type(transactionData) == 'table' and transactionData.reason or type(transactionData) == 'string' and transactionData or nil).ok
+        end
+
         if transactionData and moneyType == "bank" then
             if GetResourceState("RxBanking") == "started" then
                 local personalAcc = exports["RxBanking"]:GetPlayerPersonalAccount(p.getIdentifier())
@@ -236,6 +243,13 @@ function adapter.getPlayerBySrc(src)
         moneyType = moneyType or Defaults.MONEY
         if not amount then return end
         if moneyType == "money" then moneyType = "cash" end
+
+        -- Szyszka: custom integration
+        if moneyType == 'bank' and GetResourceState('sz_banking') == 'started' then
+            return exports.sz_banking:RemovePlayerMoney(_fwp.source, amount,
+                type(transactionData) == 'table' and transactionData.type or 'payment',
+                type(transactionData) == 'table' and transactionData.reason or type(transactionData) == 'string' and transactionData or nil).ok
+        end
 
         if transactionData and moneyType == "bank" then
             if GetResourceState("RxBanking") == "started" then
